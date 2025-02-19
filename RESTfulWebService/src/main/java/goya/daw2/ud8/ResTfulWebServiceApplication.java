@@ -13,7 +13,9 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpEntity;
 import org.springframework.util.Assert;
 import org.springframework.web.client.RestTemplate;
-
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.reactive.function.client.WebClient;
+@Configuration
 @SpringBootApplication
 public class ResTfulWebServiceApplication {
 	
@@ -66,6 +68,24 @@ public class ResTfulWebServiceApplication {
 		
 		log.info(joke.toString());	
 	}
+	
+	// Crear una instancia de WebClient
+	WebClient webClient = WebClient.create("https://api.example.com");
+
+	// Realizar una solicitud GET y obtener una respuesta en forma de String
+	String respuesta = webClient.get() //Prepara una solicitud GET.
+	    .uri("/resource") //Especifica la URI relativa a la base URL.
+	    .retrieve() //Inicia la ejecución de la solicitud y obtiene la respuesta.
+	    .bodyToMono(String.class)  //Convierte el cuerpo de la respuesta a un tipo Mono (un contenedor reactiva) de tipo String
+	    .block(); //Bloquea la ejecución hasta que se completa la operación reactiva y obtiene el resultado.
+
+	// Realizar una solicitud POST con datos y obtener una respuesta en forma de objeto
+	/*RespuestaDTO resultado = webClient.post() //Prepara una solicitud POST.
+	    .uri("/resource")
+	    .bodyValue(datos) //Adjunta datos al cuerpo de la solicitud.
+	    .retrieve() 
+	    .bodyToMono(RespuestaDTO.class)
+	    .block();*/
 	@Bean
 	@Profile("!test")
 	public CommandLineRunner run(RestTemplate restTemplate) throws Exception {
